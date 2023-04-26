@@ -1,0 +1,53 @@
+import requests
+
+# Riot Games API key
+API_KEY = "INSERT KEY"
+
+# Base URL for Riot Games' API
+BASE_URL = "https://na1.api.riotgames.com"
+
+# Function to get summoner details by summoner name
+def get_summoner(summoner_name):
+    # API endpoint for summoner details by summoner name
+    endpoint = f"/lol/summoner/v4/summoners/by-name/{summoner_name}"
+    
+    # Construct the full URL for the API request
+    url = BASE_URL + endpoint
+    
+    # Set the headers with the API key
+    headers = {
+        "X-Riot-Token": API_KEY
+    }
+    
+    try:
+        # Send the API request
+        response = requests.get(url, headers=headers)
+        
+        # Check if the response was successful
+        if response.status_code == 200:
+            # Parse the JSON response
+            summoner = response.json()
+            return summoner
+        else:
+            print(f"Failed to fetch summoner details. Response code: {response.status_code}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch summoner details. Error: {e}")
+        return None
+
+# Main function
+def main():
+    summoner_name = input("Enter summoner name: ")
+    summoner = get_summoner(summoner_name)
+    if summoner:
+        print(f"Summoner details for '{summoner_name}':")
+        print("Summoner ID: ", summoner.get("id"))
+        print("Account ID: ", summoner.get("accountId"))
+        print("PUUID: ", summoner.get("puuid"))
+        print("Summoner Level: ", summoner.get("summonerLevel"))
+        print("Profile Icon ID: ", summoner.get("profileIconId"))
+    else:
+        print("Summoner not found.")
+
+if __name__ == "__main__":
+    main()
